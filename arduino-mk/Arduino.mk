@@ -1093,12 +1093,15 @@ reset_stty:
 		(sleep 0.1 2>/dev/null || sleep 1) ; \
 		$$STTYF $(call get_monitor_port) -hupcl
 
+raw_ispload:	$(TARGET_EEP) $(TARGET_HEX) verify_size
+		$(AVRDUDE) $(AVRDUDE_COM_OPTS) $(AVRDUDE_ISP_OPTS) \
+			$(AVRDUDE_ISPLOAD_OPTS)
+
 ispload:	$(TARGET_EEP) $(TARGET_HEX) verify_size
 ifdef AVRDUDE_ISP_FUSES_PRE
 		$(AVRDUDE) $(AVRDUDE_COM_OPTS) $(AVRDUDE_ISP_OPTS) -e $(AVRDUDE_ISP_FUSES_PRE)
 endif
-		$(AVRDUDE) $(AVRDUDE_COM_OPTS) $(AVRDUDE_ISP_OPTS) \
-			$(AVRDUDE_ISPLOAD_OPTS)
+		$(MAKE) raw_ispload
 ifdef AVRDUDE_ISP_FUSES_POST
 		$(AVRDUDE) $(AVRDUDE_COM_OPTS) $(AVRDUDE_ISP_OPTS) $(AVRDUDE_ISP_FUSES_POST)
 endif
